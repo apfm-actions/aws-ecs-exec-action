@@ -13,9 +13,9 @@ Usage
     aws-access-key-id: ${{ secrets.AWS_ACCESS_KEY_ID }}
     aws-secret-access-key: ${{ secrets.AWS_SECRET_ACCESS_KEY }}
     aws-region: us-west-2
-  task-name: my-ecs-task
-  wait: true
-  timeout: 600
+    task-name: my-ecs-task
+    wait: true
+    timeout: 600
 ```
 
 Inputs
