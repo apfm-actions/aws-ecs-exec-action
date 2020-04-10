@@ -1,0 +1,103 @@
+#!/bin/sh
+# A Wrapper-Script around the AWS CLI that allows executing commands against a
+# specific ECS Task definition.
+set -e
+
+error() { echo "error: $*"; }
+die() { error "$*"; exit 1; }
+usage()
+{
+	if test "$#" -gt 0; then
+		error "$*"
+		echo "try '${0##*/} --help'" >&2
+		exit 1
+	fi
+
+	sed -e 's/^	//' <<END_USAGE
+	usage: ${0##*/} [options] <container> <command> <args> ...
+	options:
+	  -p,--profile <profile>		AWS Profile
+	  -c,--cluster <cluster>		Cluster to use
+	  -w, --wait				Wait for task to exit
+	  --timeout <seconds>			Time to --wait for task completion
+	  -d,--debug				Enable debugging
+	  -h,--help				Display this help
+
+END_USAGE
+exit 0
+}
+
+for arg; do case "${arg}" in (-h|-help|--help) usage;;esac;done
+DRY_RUN=
+WAIT=false
+TIMEOUT=
+ECS_CLUSTER='default'
+while test "$#" -gt '0'; do
+	case "${1}" in
+	(-p|--profile)	export AWS_PROFILE="${2}";shift 1;;
+	(-c|--cluster)	ECS_CLUSTER="${2}";shift 1;;
+	(-d|--debug)	set -x;;
+	(-w|--wait)	WAIT=true;;
+	(--timeout)	TIMEOUT="--cli-read-timeout ${2}";shift 1;;
+	(-n|--dry-run)	DRY_RUN=':';;
+	# POSIX argument guidelines
+	(-*)		usage "unknown option '${1}'";;
+	(--)		shift; break;;
+	(*)		break;;
+	esac
+	shift 1
+done
+
+test "$#" -gt '0' || usage 'no ecs task specified'
+ECS_TASK="${1%%:*}"
+shift
+#ECS_TASK_REVISION="${1##*:}"
+#if test -z "${ECS_TASK_REVISION}"; then
+#	ECS_TASK_REVISION="$(aws ${TIMEOUT} ecs describe-task-definition --task-definition "${ECS_TASK}" | jq -r '.taskDefinition.revision')"
+#fi
+
+# Validate our cluster
+case "$(aws ${TIMEOUT} ecs describe-clusters --clusters "${ECS_CLUSTER}" | jq -r .clusters[0].clusterName)" in
+(null) die "invalid cluster '${ECS_CLUSTER}'";;
+esac
+
+## VPC/Subnet Json
+# Ideally we would lookup a default vpc first
+ECS_SUBNETS_JSON="$(aws ec2 describe-subnets --filters Name=tag:Name,Values=*ecs-cluster-private*)"
+ECS_SUBNETS="$(echo "${ECS_SUBNETS_JSON}"| jq -r .Subnets[].SubnetId)"
+ECS_SUBNETS_JSON='{"awsvpcConfiguration": {"assignPublicIp":"DISABLED","subnets": ['
+for subnet in ${ECS_SUBNETS}; do
+	ECS_SUBNETS_JSON="${ECS_SUBNETS_JSON}\"${subnet}\","
+done
+ECS_SUBNETS_JSON="${ECS_SUBNETS_JSON%,}]}}"
+
+# FIXME do we need the VPC ID?
+#aws --profile terraform@apfm-dev ec2 describe-vpcs | jq -r '.Vpcs[0].VpcId'
+
+## Command Override Json
+# Converts the shell arg list into a json list
+ECS_CMD_JSON='{"containerOverrides": [{'
+ECS_CMD_JSON="${ECS_CMD_JSON} \"name\":\"${ECS_TASK%%:*}\""
+if test "$#" -gt '0'; then
+	ECS_CMD_JSON="${ECS_CMD_JSON}, \"command\":["
+	for arg; do ECS_CMD_JSON="${ECS_CMD_JSON}\"${arg}\",";done
+	ECS_CMD_JSON="${ECS_CMD_JSON%,}]"
+fi
+ECS_CMD_JSON="${ECS_CMD_JSON}}]}"
+
+TASK_JSON="$(${DRY_RUN} aws ${TIMEOUT} ecs run-task \
+	--output json \
+	--launch-type FARGATE \
+	--count 1 \
+        --task-definition "${ECS_TASK}" \
+	--cluster "${ECS_CLUSTER}" \
+        --network-configuration "${ECS_SUBNETS_JSON}" \
+	--overrides "${ECS_CMD_JSON}")"
+TASK_ARN="$(printf '%s' "${TASK_JSON}"|jq -r '.tasks[0].taskArn')"
+TASK_EXIT_CODE='0'
+if "${WAIT}"; then
+	aws ${TIMEOUT} ecs wait tasks-stopped --cluster "${ECS_CLUSTER}" --tasks "${TASK_ARN}"
+	TASK_JSON="$(aws ${TIMEOUT} ecs describe-tasks --cluster "${ECS_CLUSTER}" --tasks "${TASK_ARN}")"
+	TASK_EXIT_CODE="$(printf '%s' "${TASK_JSON}"|jq -r '.tasks[0].containers[0].exitCode')"
+fi
+exit "${TASK_EXIT_CODE}"
