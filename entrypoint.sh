@@ -19,7 +19,7 @@ if ! test -z "${INPUT_AWS_ROLE_ARN}"; then
 			--role-arn "${INPUT_AWS_ROLE_ARN}" \
 			--role-session-name 'aws-ecs-exec-action')"
 	export AWS_ACCESS_KEY_ID="$(echo "${AWS_ACCESS_JSON}"|jq -r '.Credentials.AccessKeyId')"
-	export AWS_SECERT_ACCESS_KEY="$(echo "${AWS_ACCESS_JSON}"|jq -r '.Credentials.SecretAccessKey')"
+	export AWS_SECRERT_ACCESS_KEY="$(echo "${AWS_ACCESS_JSON}"|jq -r '.Credentials.SecretAccessKey')"
 	export AWS_SESSION_TOKEN="$(echo "${AWS_ACCESS_JSON}"|jq -r '.Credentials.SessionToken')"
 fi
 WAIT=
