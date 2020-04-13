@@ -62,3 +62,8 @@ aws-cli connection-read-timeout as the `aws ecs wait` does not support a
 timeout itself.
 - required: false
 - default: 600
+
+### debug ###
+Enable debugging
+- required: false
+- default: false

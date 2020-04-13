@@ -4,6 +4,12 @@ export AWS_ACCESS_KEY_ID="${INPUT_AWS_ACCESS_KEY_ID}"
 export AWS_SECRET_ACCESS_KEY="${INPUT_AWS_SECRET_ACCESS_KEY}"
 export AWS_REGION="${INPUT_AWS_REGION}"
 
+DEBUG=
+if test "${INPUT_DEBUG}" = 'true'; then
+	DEBUG='--debug'
+       	set -x
+fi
+
 if ! test -z "${INPUT_AWS_ROLE_ARN}"; then
 	set --
 	if ! test -z "${INPUT_AWS_EXTERNAL_ID}"; then
@@ -18,4 +24,4 @@ if ! test -z "${INPUT_AWS_ROLE_ARN}"; then
 fi
 WAIT=
 ! "${INPUT_WAIT}" || WAIT='--wait'
-exec /app/ecs-exec --timeout "${INPUT_TIMEOUT}" ${WAIT} --cluster "${INPUT_CLUSTER}" "${INPUT_TASK_NAME}"
+exec /app/ecs-exec ${DEBUG} ${WAIT} --timeout "${INPUT_TIMEOUT}" --cluster "${INPUT_CLUSTER}" "${INPUT_TASK_NAME}"

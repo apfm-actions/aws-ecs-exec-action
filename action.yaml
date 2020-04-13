@@ -26,6 +26,9 @@ inputs:
   timeout:
     description: 'Timeout when waiting for completition'
     default: 600
+  debug:
+    description: 'Enable debugging'
+    default: false
 
 outputs:
   status:
