@@ -36,6 +36,13 @@ The `AWS_REGION`
 - required: true
 - default: us-west-2
 
+### aws-role-arn ###
+Specify the ARN of a role to `sts:AssumeRole` to.
+
+### aws-external-id ###
+Supply an external-id when performing an `sts:AssumeRole`. This is an optional
+parameter to `sts:AssumeRole`.
+
 ### task-name ###
 The ECS task definition name.
 - required: true
