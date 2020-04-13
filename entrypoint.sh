@@ -5,11 +5,11 @@ export AWS_SECRET_ACCESS_KEY="${INPUT_AWS_SECRET_ACCESS_KEY}"
 export AWS_REGION="${INPUT_AWS_REGION}"
 
 if ! test -z "${INPUT_AWS_ROLE_ARN}"; then
-	EXTERNAL_ID=
+	set --
 	if ! test -z "${INPUT_AWS_EXTERNAL_ID}"; then
-		EXTERNAL_ID="--external-id '${INPUT_AWS_EXTERNAL_ID}'"
+		set -- --external-id "${INPUT_AWS_EXTERNAL_ID}"
 	fi
-	AWS_ACCESS_JSON="$(aws sts assume-role ${EXTERNAL_ID} \
+	AWS_ACCESS_JSON="$(aws sts assume-role "${@}" \
 			--role-arn "${INPUT_AWS_ROLE_ARN}" \
 			--role-session-name 'GitHub ECS Exec Action')"
 	export AWS_ACCESS_KEY_ID="$(echo "${AWS_ACCESS_JSON}"|jq '.Credentials.AccessKeyId')"
