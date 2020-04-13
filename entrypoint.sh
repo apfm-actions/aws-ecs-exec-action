@@ -11,7 +11,7 @@ if ! test -z "${INPUT_AWS_ROLE_ARN}"; then
 	fi
 	AWS_ACCESS_JSON="$(aws sts assume-role "${@}" \
 			--role-arn "${INPUT_AWS_ROLE_ARN}" \
-			--role-session-name 'GitHub ECS Exec Action')"
+			--role-session-name 'aws-ecs-exec-action')"
 	export AWS_ACCESS_KEY_ID="$(echo "${AWS_ACCESS_JSON}"|jq '.Credentials.AccessKeyId')"
 	export AWS_SECERT_ACCESS_KEY="$(echo "${AWS_ACCESS_JSON}"|jq '.Credentials.SecretAccessKey')"
 	export AWS_SESSION_TOKEN="$(echo "${AWS_ACCESS_JSON}"|jq '.Credentials.SessionToken')"
