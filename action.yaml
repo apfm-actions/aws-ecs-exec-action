@@ -12,6 +12,10 @@ inputs:
     description: 'AWS_REGION'
     required: true
     default: us-west-2
+  aws-role-arn:
+    description: 'AWS IAM Role to assume (optional)'
+  aws-external-id:
+    description: 'External ID to use when assuming roles (optional)'
   task-name:
     description: 'ECS task[:revision]'
     required: true
