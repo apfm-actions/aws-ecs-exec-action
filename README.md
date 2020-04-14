@@ -4,44 +4,33 @@ AWS ECS Exec Action
 This GitHub Action allows performing the equivilant of `aws ecs run-task`
 against an ECS task-definition.
 
+This action expects AWS credentials to have already been initialized.
+See: https://github.com/aws-actions/configure-aws-credentials
+
 Usage
 -----
 
 ```yaml
-- uses: aplaceformom/aws-ecs-exec-action@master
-  with:
-    aws-access-key-id: ${{ secrets.AWS_ACCESS_KEY_ID }}
-    aws-secret-access-key: ${{ secrets.AWS_SECRET_ACCESS_KEY }}
-    aws-region: us-west-2
-    task-name: my-ecs-task
-    wait: true
-    timeout: 600
+  - name: Configure AWS Credentials
+    uses: aws-actions/configure-aws-credentials@v1
+    with:
+      aws-access-key-id: ${{ secrets.AWS_ACCESS_KEY_ID }}
+      aws-secret-access-key: ${{ secrets.AWS_SECRET_ACCESS_KEY }}
+      aws-region: us-east-2
+      role-to-assume: ${{ secrets.AWS_ROLE_TO_ASSUME }}
+      role-external-id: ${{ secrets.AWS_ROLE_EXTERNAL_ID }}
+      role-duration-seconds: 1200
+      role-session-name: MySessionName
+  - name: Execute my ECS Task
+    uses: aplaceformom/aws-ecs-exec-action@master
+    with:
+      task-name: my-ecs-task
+      wait: true
+      timeout: 600
 ```
 
 Inputs
 ------
-
-### aws-access-key-id ###
-The `AWS_ACCESS_KEY_ID`
-- required: true
-- default: N/A
-
-### aws-secret-access-key ###
-The `AWS_SECRET_ACCESS_KEY`
-- required: true
-- default: N/A
-
-### aws-region ###
-The `AWS_REGION`
-- required: true
-- default: us-west-2
-
-### aws-role-arn ###
-Specify the ARN of a role to `sts:AssumeRole` to.
-
-### aws-external-id ###
-Supply an external-id when performing an `sts:AssumeRole`. This is an optional
-parameter to `sts:AssumeRole`.
 
 ### task-name ###
 The ECS task definition name.
