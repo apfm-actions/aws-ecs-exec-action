@@ -15,6 +15,10 @@ inputs:
   debug:
     description: 'Enable debugging'
     default: false
+  aws-role-arn:
+    description: 'AWS IAM Role to assume (optional)'
+  aws-external-id:
+    description: 'External ID to use when assuming roles (optional)'
 
 outputs:
   status:
