@@ -204,4 +204,4 @@ fi
 
 WAIT=
 ! "${INPUT_WAIT}" || WAIT='--wait'
-exec /app/ecs-exec ${DEBUG} ${WAIT} --timeout "${INPUT_TIMEOUT}" --cluster "${INPUT_CLUSTER}" "${INPUT_TASK_NAME}"
+exec /app/ecs-exec ${DEBUG} ${WAIT} --timeout "${INPUT_TIMEOUT}" --cluster "${INPUT_CLUSTER:=default}" "${INPUT_TASK_NAME}"
