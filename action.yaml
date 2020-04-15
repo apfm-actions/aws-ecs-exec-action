@@ -1,21 +1,7 @@
 # action.yml
 name: 'ECS Run Task'
-description: 'Syncronously execute an ECS task'
+description: 'Execute an ECS task'
 inputs:
-  aws-access-key-id:
-    description: 'AWS_ACCESS_KEY_ID'
-    required: true
-  aws-secret-access-key:
-    description: 'AWS_SECRET_ACCESS_KEY'
-    required: true
-  aws-region:
-    description: 'AWS_REGION'
-    required: true
-    default: us-west-2
-  aws-role-arn:
-    description: 'AWS IAM Role to assume (optional)'
-  aws-external-id:
-    description: 'External ID to use when assuming roles (optional)'
   task-name:
     description: 'ECS task[:revision]'
     required: true
