@@ -1,8 +1,9 @@
 FROM amazon/aws-cli
 
+RUN yum install jq -y
+
 WORKDIR /app
 COPY entrypoint.sh /entrypoint.sh
 COPY ecs-exec .
-RUN yum install jq -y
 
 ENTRYPOINT ["/entrypoint.sh"]
