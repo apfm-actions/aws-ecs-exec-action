@@ -5,6 +5,10 @@ inputs:
   task-name:
     description: 'ECS task[:revision]'
     required: true
+  cluster:
+    description: 'ECS Cluster to run task on'
+    required: false
+    default: default
   wait:
     description: 'Wait for ECS task to complete'
     required: true

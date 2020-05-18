@@ -35,6 +35,11 @@ The ECS task definition name.
 - required: true
     default: N/A
 
+### cluster ###
+The ECS cluster to execute the task on.
+- required: false
+- default: default
+
 ### wait ###
 Whether to wait for the task to complete.  Normally launching of an ECS task is
 asyncronous and the AWS API returns once it has scheduled the launching of the
