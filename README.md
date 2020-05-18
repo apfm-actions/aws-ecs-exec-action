@@ -20,9 +20,9 @@ Usage
   - name: Execute my ECS Task
     uses: aplaceformom/aws-ecs-exec-action@master
     with:
-      aws-role-arn: ${{ secrets.AWS_ROLE_TO_ASSUME }}
-      aws-external-id: ${{ secrets.AWS_ROLE_EXTERNAL_ID }}
-      task-name: my-ecs-task
+      aws_role_arn: ${{ secrets.AWS_ROLE_TO_ASSUME }}
+      aws_external_id: ${{ secrets.AWS_ROLE_EXTERNAL_ID }}
+      task_name: my-ecs-task
       wait: true
       timeout: 600
 ```

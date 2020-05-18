@@ -2,7 +2,7 @@
 name: 'ECS Run Task'
 description: 'Execute an ECS task'
 inputs:
-  task-name:
+  task_name:
     description: 'ECS task[:revision]'
     required: true
   cluster:
@@ -19,9 +19,9 @@ inputs:
   debug:
     description: 'Enable debugging'
     default: false
-  aws-role-arn:
+  aws_role_arn:
     description: 'AWS IAM Role to assume (optional)'
-  aws-external-id:
+  aws_external_id:
     description: 'External ID to use when assuming roles (optional)'
 
 outputs:
