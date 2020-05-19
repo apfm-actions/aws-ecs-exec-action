@@ -18,7 +18,7 @@ Usage
       aws-secret-access-key: ${{ secrets.AWS_SECRET_ACCESS_KEY }}
       aws-region: us-east-2
   - name: Execute my ECS Task
-    uses: aplaceformom/aws-ecs-exec-action@master
+    uses: apfm-actions/aws-ecs-exec-action@master
     with:
       aws_role_arn: ${{ secrets.AWS_ROLE_TO_ASSUME }}
       aws_external_id: ${{ secrets.AWS_ROLE_EXTERNAL_ID }}
