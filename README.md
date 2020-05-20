@@ -1,11 +1,15 @@
 AWS ECS Exec Action
 ===================
 
-This GitHub Action allows performing the equivilant of `aws ecs run-task`
-against an ECS task-definition.
+This [GitHub Action][GitHub Actions] allows performing the equivilant of
+`aws ecs run-task` against an ECS task-definition.
 
 This action expects AWS credentials to have already been initialized.
-See: https://github.com/aws-actions/configure-aws-credentials
+
+See also:
+- https://help.github.com/en/actions
+- https://github.com/apfm-actions
+- https://github.com/aws-actions/configure-aws-credentials
 
 Usage
 -----
@@ -66,3 +70,12 @@ parameter to `sts:AssumeRole`.
 Enable debugging
 - required: false
 - default: false
+
+[//]: # (The following are reference links used elsewhere in the document)
+
+[Git]: https://git-scm.com/
+[GitHub]: https://www.github.com
+[GitHub Actions]: https://help.github.com/en/actions
+[Terraform]: https://www.terraform.io/
+[Docker]: https://www.docker.com
+[Dockerfile]: https://docs.docker.com/engine/reference/builder/
