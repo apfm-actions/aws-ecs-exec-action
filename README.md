@@ -14,6 +14,7 @@ See also:
 Usage
 -----
 
+### Executing an existing task
 ```yaml
   - name: Configure AWS Credentials
     uses: aws-actions/configure-aws-credentials@v1
@@ -24,12 +25,39 @@ Usage
   - name: Execute my ECS Task
     uses: apfm-actions/aws-ecs-exec-action@master
     with:
+      task_name: my-ecs-task
       aws_role_arn: ${{ secrets.AWS_ROLE_TO_ASSUME }}
       aws_external_id: ${{ secrets.AWS_ROLE_EXTERNAL_ID }}
-      task_name: my-ecs-task
       wait: true
       timeout: 600
 ```
+
+### Defining a new task to execute
+```yaml
+  - name: Configure AWS Credentials
+    uses: aws-actions/configure-aws-credentials@v1
+    with:
+      aws-access-key-id: ${{ secrets.AWS_ACCESS_KEY_ID }}
+      aws-secret-access-key: ${{ secrets.AWS_SECRET_ACCESS_KEY }}
+      aws-region: us-east-2
+  - name: Execute my ECS Task
+    uses: apfm-actions/aws-ecs-exec-action@master
+    with:
+      project: 'examples'
+      name: 'db-migration'
+      image: 'myrepo.example.com/my-image'
+      # image: 'my-dockerhub-image'
+      version: 'latest'
+      cpu: 256
+      memory: 512
+      command: '["/app/db-migration.sh"]'
+      exec_role: 'ecsTaskExecutionRoleDefault'
+      aws_role_arn: ${{ secrets.AWS_ROLE_TO_ASSUME }}
+      aws_external_id: ${{ secrets.AWS_ROLE_EXTERNAL_ID }}
+      wait: true
+      timeout: 600
+```
+
 
 Inputs
 ------
