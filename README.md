@@ -83,11 +83,28 @@ Overide default container command
 - required: `false`
 
 ### environment
-Comma separated list of environment variable _names_ that should be exported to the ECS container environment
+Comma separated list of environment variable _names_ that should be exported to
+the ECS container environment
 - required: `false`
 
+Example:
+```
+  - name: Execute my ECS Task
+    uses: apfm-actions/aws-ecs-exec-action@master
+    env:
+      DB_ADDRESS: my-database.example.com
+      DB_USER: admin
+      DB_PASS: /my/aws/ssm/password/path
+    with:
+      project: 'examples'
+      image: 'my-dockerhub-image'
+      environment: DB_ADDRESS,DB_USER
+      secrets: DB_PASS
+```
+
 ### secrets
-Comma separated list of environment variable _names_ that should be exported to the ECS container secrets
+Comma separated list of environment variable _names_ that should be exported to
+the ECS container secrets. (See environment example)
 - required: `false`
 
 ### cpu
