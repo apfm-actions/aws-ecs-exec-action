@@ -2,16 +2,41 @@
 name: 'ECS Run Task'
 description: 'Execute an ECS task'
 inputs:
-  task_name:
-    description: 'ECS task[:revision]'
+  project:
+    description: 'Project family this task is part of'
     required: true
+  name:
+    description: 'Optional name to append to generated task. This helps avoid conflicts with existing task names in the same workflow.'
+  image:
+    description: 'Docker image to use when creating a task definition'
+  version:
+    description: 'Version/Label of Docker image to use when creating a task definition'
+    default: 'latest'
+  command:
+    description: 'Overide default container command'
+  environment:
+    description: 'Comma separated list of environment variable _names_ that should be exported to the ECS container environment'
+  secrets:
+    description: 'Comma separated list of environment variable _names_ that should be exported to the ECS container secrets'
+  cpu:
+    description: 'CPU allocation (in micro-units)'
+    default: 256
+  memory:
+    description: 'Memory allocation'
+    default: 512
+  exec_role:
+    description: 'ECS Task Execution role to use when provisioning the ECS task (required when creating a new task definition)'
+  task_role:
+    description: 'ECS Task role the task should assume when running.'
   cluster:
     description: 'ECS Cluster to run task on'
     required: false
-    default: default
+    default: 'default'
+  task_name:
+    description: 'Name of existing ECS task, in the form of `name[:version]`,  to execute instead of defining a new task.'
+    required: false
   wait:
     description: 'Wait for ECS task to complete'
-    required: true
     default: false
   timeout:
     description: 'Timeout when waiting for completition'

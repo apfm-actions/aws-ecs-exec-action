@@ -34,10 +34,53 @@ Usage
 Inputs
 ------
 
+### project
+Project family this task is part of
+- required: `true`
+
+### name:
+Optional name to append to generated task. This helps avoid conflicts with existing task names in the same workflow.
+- required: `false`
+
+### image
+Docker image to use when creating a task definition
+- required: `false`
+
+### version
+Version/Label of Docker image to use when creating a task definition
+- default: `latest`
+
+### command
+Overide default container command
+- required: `false`
+
+### environment
+Comma separated list of environment variable _names_ that should be exported to the ECS container environment
+- required: `false`
+
+### secrets
+Comma separated list of environment variable _names_ that should be exported to the ECS container secrets
+- required: `false`
+
+### cpu
+CPU allocation (in micro-units)
+- default: `256`
+
+### memory
+Memory allocation
+- default: `512`
+
+### exec_role
+ECS Task Execution role to use when provisioning the ECS task (required when creating a new task definition)
+- required: `true` _(when creating a new task)_
+
+### task_role
+ECS Task role the task should assume when running.
+- required: `false`
+
 ### task-name ###
-The ECS task definition name.
-- required: true
-    default: N/A
+Optional name of existing task definition to execute.
+- required: false
 
 ### cluster ###
 The ECS cluster to execute the task on.
