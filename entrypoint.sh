@@ -85,7 +85,7 @@ aws_task_definition()
 		"name": "${INPUT_NAME}",
 		"image": "${INPUT_IMAGE}",
 		"cpu": ${INPUT_CPU},
-		"memory": ${INPUT_MEM},
+		"memory": ${INPUT_MEMORY},
 		"command": ${INPUT_COMMAND},
 		"essential": true,
 		"environment": [$(environment)],
@@ -172,7 +172,7 @@ if test -z "${INPUT_TASK_NAME}"; then
 		set -- \
 			--family "${INPUT_NAME}" \
 			--cpu "${INPUT_CPU}" \
-			--memory "${INPUT_MEM}" \
+			--memory "${INPUT_MEMORY}" \
 			--requires-compatibilities 'FARGATE' \
 			--network-mode 'awsvpc' \
 			--execution-role-arn "$(aws_role_arn "${INPUT_EXEC_ROLE}")" \
