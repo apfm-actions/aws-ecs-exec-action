@@ -88,8 +88,8 @@ aws_task_definition()
 		"memory": ${INPUT_MEMORY},
 		"command": ${INPUT_COMMAND},
 		"essential": true,
-		"environment": [$(environment)],
-		"secrets": [$(secrets)],
+		"environment": [$(environment "${INPUT_ENVIRONMENT}")],
+		"secrets": [$(secrets "${INPUT_SECRETS}")],
 		"logConfiguration": {
 			"logDriver": "awslogs",
 			"options": {
