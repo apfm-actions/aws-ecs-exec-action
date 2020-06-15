@@ -35,15 +35,13 @@ aws_role_arn()
 # $@: List of Environment variable names to produce AWS JSON Env output for
 environment()
 {
-	IFS="${IFS},"
-	set -- "$@"
-	IFS="${IFS%,}"
-	_env_string=
-	for _env_key; do
-		eval _env_val="\${_env_key}"
-		_env_string="$(printf '{ "name": "%s", "value": "%s" },' "${_env_val}" "${_env_key}")"
-	done
-	echo "${_env_string%,}"
+    local IFS=","
+    _env_string=
+    for _env_key in $@; do 
+        _env_val=$( eval "echo \$$_env_key" )
+        _env_string="${_env_string} $(printf '{ "name": "%s", "value": "%s" },' "${_env_key}" "${_env_val}")"
+    done;
+    echo "${_env_string%,}"
 }
 
 ##
