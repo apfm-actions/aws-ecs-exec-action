@@ -39,7 +39,7 @@ split()
 	shift
 	for __split_arg; do
 		while ! test -z "${__split_arg}"; do
-			/usr/bin/printf '"%q"\n' "${__split_arg%%,*}"
+			/usr/bin/printf '"%s"\n' "${__split_arg%%,*}"
 			test "${__split_arg#*,}" != "${__split_arg}" || break
 			__split_arg="${__split_arg#*,}"
 		done
