@@ -73,15 +73,15 @@ secrets()
 			;;
 
 		(key/) # KMS
-			_secrets_val="arn:aws:kms:$(aws_region):$(aws_account_id):${_secret_val}"
+			_secret_val="arn:aws:kms:$(aws_region):$(aws_account_id):${_secret_val}"
 			;;
 
 		(/*) # SSM
-			_secrets_val="arn:aws:ssm:$(aws_region):$(aws_account_id):${_secret_val}"
+			_secret_val="arn:aws:ssm:$(aws_region):$(aws_account_id):${_secret_val}"
 			;;
 
 		(*) # Secrets Manager
-			_secrets_val="arn:aws:secretsmanager:$(aws_region):$(aws_account_id):secret:${_secret_val}"
+			_secret_val="arn:aws:secretsmanager:$(aws_region):$(aws_account_id):secret:${_secret_val}"
 			;;
 		esac
 		_secret_string="${_secret_string},$(printf '{ "name": "%s", "valueFrom": "%s" }' "${_secret_key}" "${_secret_val}")"
