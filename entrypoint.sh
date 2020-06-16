@@ -84,7 +84,7 @@ secrets()
 			_secrets_val="arn:aws:secretsmanager:$(aws_region):$(aws_account_id):secret:${_secret_val}"
 			;;
 		esac
-		_secret_string="$(printf '{ "name": "%s", "valueFrom": "%s" },' "${_secret_val}" "${_secret_key}")"
+		_secret_string="$(printf '{ "name": "%s", "valueFrom": "%s" },' "${_secret_key}" "${_secret_val}")"
 	done
 	echo "${_secret_string%,}"
 	test "${INPUT_DEBUG}" != true || set -x
