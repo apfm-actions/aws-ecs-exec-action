@@ -94,7 +94,7 @@ Example:
     env:
       DB_ADDRESS: my-database.example.com
       DB_USER: admin
-      DB_PASS: /my/aws/ssm/password/path
+      DB_PASS: parameter/my/aws/ssm/password/path
     with:
       project: 'examples'
       image: 'my-dockerhub-image'
