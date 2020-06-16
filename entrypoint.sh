@@ -56,7 +56,7 @@ environment()
 		eval _env_val="$(strip "\${${_env_key}}")"
 		_env_string="${_env_string},$(printf '{ "name": "%s", "value": "%s" },' "${_env_key}" "${_env_val}")"
 	done
-	echo "${_env_string%,}"
+	echo "${_env_string#,}"
 }
 
 ##
@@ -86,7 +86,7 @@ secrets()
 		esac
 		_secret_string="${_secret_string},$(printf '{ "name": "%s", "valueFrom": "%s" },' "${_secret_key}" "${_secret_val}")"
 	done
-	echo "${_secret_string%,}"
+	echo "${_secret_string#,}"
 	test "${INPUT_DEBUG}" != true || set -x
 }
 aws_task_definition()
