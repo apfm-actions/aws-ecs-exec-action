@@ -54,7 +54,7 @@ secrets()
 	IFS="${IFS%,}"
 	_secret_string=
 	for _secret_key; do
-		eval _secret_val="\${_secret_key}"
+		eval _secret_val="\${${_secret_key}}"
 		case "${_secret_val}" in
 		(arn:aws:*) # ARN, do nothing
 			;;
@@ -162,8 +162,8 @@ if test -z "${INPUT_TASK_NAME}"; then
 		eval param_val="\${INPUT_$(toupper "${param}")}"
 		test "${param_val}" = "$(task_param "${param}")" || UPDATE_TASK='true'
 	done
-	test "[$(environment)]" = "$(task_param 'environment')" || UPDATE_TASK='true'
-	test "[$(secrets)]" = "$(task_param 'secrets')" || UPDATE_TASK='true'
+	test "[$(environment "${INPUT_ENVIRONMENT}")]" = "$(task_param 'environment')" || UPDATE_TASK='true'
+	test "[$(secrets "${INPUT_SECRETS}")]" = "$(task_param 'secrets')" || UPDATE_TASK='true'
 
 
 	if ${UPDATE_TASK}; then
