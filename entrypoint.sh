@@ -32,16 +32,29 @@ aws_role_arn()
 }
 
 
+strip() { printf '%s' "$*"|sed -e 's/^[[:space:]]//;s/[[:space:]]$//;'; }
+split()
+{
+	__split_delim="${1}"
+	shift
+	for __split_arg; do
+		while ! test -z "${__split_arg}"; do
+			/usr/bin/printf '"%q"\n' "${__split_arg%%,*}"
+			test "${__split_arg#*,}" != "${__split_arg}" || break
+			__split_arg="${__split_arg#*,}"
+		done
+		shift
+	done
+}
+
 # $@: List of Environment variable names to produce AWS JSON Env output for
 environment()
 {
-	IFS="${IFS},"
-	set -- "$@"
-	IFS="${IFS%,}"
+	eval set -- $(split ',' "${@}")
 	_env_string=
 	for _env_key; do
-		eval _env_val="\${${_env_key}}"
-		_env_string="$(printf '{ "name": "%s", "value": "%s" },' "${_env_val}" "${_env_key}")"
+		eval _env_val="$(strip "\${${_env_key}}")"
+		_env_string="$(printf '{ "name": "%s", "value": "%s" },' "${_env_key}" "${_env_val}")"
 	done
 	echo "${_env_string%,}"
 }
@@ -51,12 +64,10 @@ environment()
 secrets()
 {
 	set +x
-	IFS="${IFS},"
-	set -- "$@"
-	IFS="${IFS%,}"
+	eval set -- $(split ',' "${@}")
 	_secret_string=
 	for _secret_key; do
-		eval _secret_val="\${${_secret_key}}"
+		eval _secret_val="$(strip "\${${_secret_key}}")"
 		case "${_secret_val}" in
 		(arn:aws:*) # ARN, do nothing
 			;;
