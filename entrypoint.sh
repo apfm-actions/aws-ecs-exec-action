@@ -189,7 +189,7 @@ if test -z "${INPUT_TASK_NAME}"; then
 			--execution-role-arn "$(aws_role_arn "${INPUT_EXEC_ROLE}")" \
 			--container-definitions "$(aws_task_definition)"
 
-		if test -z "${INPUT_TASK_ROLE}"; then
+		if ! test -z "${INPUT_TASK_ROLE}"; then
 			set -- "${@}" --task-role-arn "$(aws_role_arn "${INPUT_TASK_ROLE}")"
 		fi
 
