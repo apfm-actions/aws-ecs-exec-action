@@ -148,10 +148,10 @@ if ! test -z "${INPUT_AWS_ROLE_ARN}"; then
 	export AWS_SESSION_TOKEN="$(echo "${AWS_ACCESS_JSON}"|jq -r '.Credentials.SessionToken')"
 fi
 
-DEBUG=
+ECS_EXEC_DEBUG=
 if test "${INPUT_DEBUG}" = 'true'; then
-	DEBUG='--debug'
-       	set -x
+	ECS_EXEC_DEBUG='--debug'
+	set -x
 fi
 
 if test -z "${INPUT_TASK_NAME}"; then
@@ -202,6 +202,6 @@ if test -z "${INPUT_TASK_NAME}"; then
 	INPUT_TASK_NAME="${INPUT_NAME}"
 fi
 
-WAIT=
-! "${INPUT_WAIT}" || WAIT='--wait'
-exec /app/ecs-exec ${DEBUG} ${WAIT} --timeout "${INPUT_TIMEOUT}" --cluster "${INPUT_CLUSTER:=default}" "${INPUT_TASK_NAME}"
+ECS_EXEC_WAIT=
+! "${INPUT_WAIT}" || ECS_EXEC_WAIT='--wait'
+exec /app/ecs-exec ${ECS_EXEC_DEBUG} ${ECS_EXEC_WAIT} --timeout "${INPUT_TIMEOUT}" --cluster "${INPUT_CLUSTER:=default}" "${INPUT_TASK_NAME}"
