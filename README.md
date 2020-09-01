@@ -123,7 +123,7 @@ ECS Task Execution role to use when provisioning the ECS task (required when cre
 ECS Task role the task should assume when running.
 - required: `false`
 
-### task-name ###
+### task_name ###
 Optional name of existing task definition to execute.
 - required: false
 
@@ -147,10 +147,10 @@ timeout itself.
 - required: false
 - default: 600
 
-### aws-role-arn ###
+### aws_role_arn ###
 Specify the ARN of a role to `sts:AssumeRole` to. (optional)
 
-### aws-external-id ###
+### aws_external_id ###
 Supply an external-id when performing an `sts:AssumeRole`. This is an optional
 parameter to `sts:AssumeRole`.
 
