@@ -80,7 +80,7 @@ secrets()
 			_secret_val="arn:aws:ssm:$(aws_region):$(aws_account_id):${_secret_val}"
 			;;
 		(/*) # SSM
-			_secret_val="arn:aws:ssm:$(aws_region):$(aws_account_id):parameter/${_secret_val}"
+			_secret_val="arn:aws:ssm:$(aws_region):$(aws_account_id):parameter${_secret_val}"
 			;;
 
 		(*) # Secrets Manager
