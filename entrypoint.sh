@@ -100,7 +100,7 @@ aws_task_definition()
 		"image": "${INPUT_IMAGE}",
 		"cpu": ${INPUT_CPU},
 		"memory": ${INPUT_MEMORY},
-		"command": ${INPUT_COMMAND},
+		"command": ${INPUT_COMMAND:=[]},
 		"essential": true,
 		"environment": [$(environment "${INPUT_ENVIRONMENT}")],
 		"secrets": [$(secrets "${INPUT_SECRETS}")],
