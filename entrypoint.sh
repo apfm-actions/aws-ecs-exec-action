@@ -163,46 +163,44 @@ if test -z "${INPUT_TASK_NAME}"; then
 	else
 		INPUT_NAME="${GITHUB_REPOSITORY##*/}-${INPUT_NAME}"
 	fi
-
-	#CURRENT_TASK="$(aws ecs describe-task-definition --task-definition "${INPUT_NAME}")"
-
-	if test -z "${INPUT_IMAGE}"; then
-		INPUT_IMAGE="$(aws_account_id).dkr.ecr.$(aws_region).amazonaws.com/${GITHUB_REPOSITORY##*/}:${INPUT_VERSION}"
-	fi
-
-	INPUT_EXEC_ROLE="$(aws_role_arn "${INPUT_EXEC_ROLE}")"
-	INPUT_TASK_ROLE="$(aws_role_arn "${INPUT_TASK_ROLE}")"
-
-	UPDATE_TASK='false'
-	for param in name image cpu memory command exec_role task_role; do
-		eval param_val="\${INPUT_$(toupper "${param}")}"
-		test "${param_val}" = "$(task_param "${param}")" || UPDATE_TASK='true'
-	done
-	test "[$(environment "${INPUT_ENVIRONMENT}")]" = "$(task_param 'environment')" || UPDATE_TASK='true'
-	test "[$(secrets "${INPUT_SECRETS}")]" = "$(task_param 'secrets')" || UPDATE_TASK='true'
-
-
-	if ${UPDATE_TASK}; then
-		set -- \
-			--family "${INPUT_NAME}" \
-			--cpu "${INPUT_CPU}" \
-			--memory "${INPUT_MEMORY}" \
-			--requires-compatibilities 'FARGATE' \
-			--network-mode 'awsvpc' \
-			--execution-role-arn "$(aws_role_arn "${INPUT_EXEC_ROLE}")" \
-			--container-definitions "$(aws_task_definition)"
-
-		if ! test -z "${INPUT_TASK_ROLE}"; then
-			set -- "${@}" --task-role-arn "$(aws_role_arn "${INPUT_TASK_ROLE}")"
-		fi
-
-		if ! test -z "${INPUT_TAGS}"; then
-			set -- "${@}" --tags "${INPUT_TAGS}"
-		fi
-
-		aws ecs register-task-definition "${@}"
-	fi
 	INPUT_TASK_NAME="${INPUT_NAME}"
+fi
+
+if test -z "${INPUT_IMAGE}"; then
+	INPUT_IMAGE="$(aws_account_id).dkr.ecr.$(aws_region).amazonaws.com/${GITHUB_REPOSITORY##*/}:${INPUT_VERSION}"
+fi
+
+INPUT_EXEC_ROLE="$(aws_role_arn "${INPUT_EXEC_ROLE}")"
+INPUT_TASK_ROLE="$(aws_role_arn "${INPUT_TASK_ROLE}")"
+
+# Register a variation of the task if any parameters are specified
+UPDATE_TASK='false'
+for param in name image cpu memory command exec_role task_role; do
+	eval param_val="\${INPUT_$(toupper "${param}")}"
+	test "${param_val}" = "$(task_param "${param}")" || UPDATE_TASK='true'
+done
+test "[$(environment "${INPUT_ENVIRONMENT}")]" = "$(task_param 'environment')" || UPDATE_TASK='true'
+test "[$(secrets "${INPUT_SECRETS}")]" = "$(task_param 'secrets')" || UPDATE_TASK='true'
+
+if ${UPDATE_TASK}; then
+	set -- \
+		--family "${INPUT_NAME}" \
+		--cpu "${INPUT_CPU}" \
+		--memory "${INPUT_MEMORY}" \
+		--requires-compatibilities 'FARGATE' \
+		--network-mode 'awsvpc' \
+		--execution-role-arn "$(aws_role_arn "${INPUT_EXEC_ROLE}")" \
+		--container-definitions "$(aws_task_definition)"
+
+	if ! test -z "${INPUT_TASK_ROLE}"; then
+		set -- "${@}" --task-role-arn "$(aws_role_arn "${INPUT_TASK_ROLE}")"
+	fi
+
+	if ! test -z "${INPUT_TAGS}"; then
+		set -- "${@}" --tags "${INPUT_TAGS}"
+	fi
+
+	aws ecs register-task-definition "${@}"
 fi
 
 ECS_EXEC_WAIT=
