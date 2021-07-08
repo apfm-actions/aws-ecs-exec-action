@@ -157,14 +157,13 @@ if test "${INPUT_DEBUG}" = 'true'; then
 	set -x
 fi
 
-if test -z "${INPUT_TASK_NAME}"; then
-	if test -z "${INPUT_NAME}"; then
-		INPUT_NAME="${GITHUB_REPOSITORY##*/}"
-	else
-		INPUT_NAME="${GITHUB_REPOSITORY##*/}-${INPUT_NAME}"
-	fi
-	INPUT_TASK_NAME="${INPUT_NAME}"
+if test -z "${INPUT_NAME}"; then
+	INPUT_NAME="${GITHUB_REPOSITORY##*/}"
+else
+	INPUT_NAME="${GITHUB_REPOSITORY##*/}-${INPUT_NAME}"
 fi
+
+! test -z "${INPUT_TASK_NAME}" || INPUT_TASK_NAME="${INPUT_NAME}"
 
 if test -z "${INPUT_IMAGE}"; then
 	INPUT_IMAGE="$(aws_account_id).dkr.ecr.$(aws_region).amazonaws.com/${GITHUB_REPOSITORY##*/}:${INPUT_VERSION}"
