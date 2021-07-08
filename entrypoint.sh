@@ -94,6 +94,7 @@ secrets()
 }
 aws_task_definition()
 {
+	test "${INPUT_COMMAND}" != 'null' || INPUT_COMMAND=
 	sed -e 's/^	//'<<EOF
 	[{
 		"name": "${INPUT_NAME}",
@@ -117,11 +118,8 @@ aws_task_definition()
 EOF
 }
 
-CURRENT_TASK_JSON=
 task_param()
 {
-	! test -z "${CURRENT_TASK_JSON}" || CURRENT_TASK_JSON="$(aws ecs describe-task-definition --task-definition "${INPUT_NAME}")"
-
 	case "${1}" in
 	(task_role)
 		echo "${CURRENT_TASK_JSON}"|jq -rc '.taskDefinition.taskRoleArn' >/dev/null 2>&1
@@ -165,21 +163,30 @@ fi
 
 ! test -z "${INPUT_TASK_NAME}" || INPUT_TASK_NAME="${INPUT_NAME}"
 
-if test -z "${INPUT_IMAGE}"; then
-	INPUT_IMAGE="$(aws_account_id).dkr.ecr.$(aws_region).amazonaws.com/${GITHUB_REPOSITORY##*/}:${INPUT_VERSION}"
-fi
-
 INPUT_EXEC_ROLE="$(aws_role_arn "${INPUT_EXEC_ROLE}")"
 INPUT_TASK_ROLE="$(aws_role_arn "${INPUT_TASK_ROLE}")"
+
+CURRENT_TASK_JSON="$(aws ecs describe-task-definition --task-definition "${INPUT_NAME}")"
 
 # Register a variation of the task if any parameters are specified
 UPDATE_TASK='false'
 for param in name image cpu memory command exec_role task_role; do
-	eval param_val="\${INPUT_$(toupper "${param}")}"
-	test "${param_val}" = "$(task_param "${param}")" || UPDATE_TASK='true'
+	eval new_param_val="\${INPUT_$(toupper "${param}")}"
+	old_param_val="$(task_param "${param}")"
+	if test -z "${new_param_val}"; then
+		eval "INPUT_$(toupper "${param}")='${old_param_val}'"
+	elif test "${old_param_val}" = "${new_param_val}";then
+		eval new_param_val="\${INPUT_$(toupper "${param}")}"
+	else
+		UPDATE_TASK='true'
+	fi
 done
 test "[$(environment "${INPUT_ENVIRONMENT}")]" = "$(task_param 'environment')" || UPDATE_TASK='true'
 test "[$(secrets "${INPUT_SECRETS}")]" = "$(task_param 'secrets')" || UPDATE_TASK='true'
+
+if test -z "${INPUT_IMAGE}"; then
+       INPUT_IMAGE="$(aws_account_id).dkr.ecr.$(aws_region).amazonaws.com/${GITHUB_REPOSITORY##*/}:${INPUT_VERSION}"
+fi
 
 if ${UPDATE_TASK}; then
 	set -- \
