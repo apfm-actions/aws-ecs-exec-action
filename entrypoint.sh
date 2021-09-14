@@ -25,7 +25,7 @@ aws_policy_arn()
 aws_role_arn()
 {
 	test -n "${1}" || return 0
-	test != 'null' || return 0
+	test "${1}" != 'null' || return 0
 	case "${1}" in
 	(arn:aws:*)	echo "${1}";;
 	(*)		echo "arn:aws:iam::$(aws_account_id):role/${1}"
