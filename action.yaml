@@ -12,6 +12,8 @@ inputs:
   version:
     description: 'Version/Label of Docker image to use when creating a task definition'
     default: 'latest'
+  sidecar:
+    description: 'Add a sidecar to the image'
   command:
     description: 'Overide default container command'
   environment:

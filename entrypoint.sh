@@ -115,8 +115,20 @@ aws_task_definition()
 				"awslogs-stream-prefix": "ecs"
 			}
 		}
-	}]
+	}
 EOF
+
+	if test -n "${INPUT_SIDECAR}"; then
+		sed -e 's/^		//'<<EOF
+		,{
+			"name": "sidecar",
+			"image": "${INPUT_SIDECAR}",
+			"essential": false
+		}
+EOF
+	fi
+
+	echo ']'
 }
 
 task_param()
