@@ -166,7 +166,7 @@ fi
 INPUT_EXEC_ROLE="$(aws_role_arn "${INPUT_EXEC_ROLE}")"
 INPUT_TASK_ROLE="$(aws_role_arn "${INPUT_TASK_ROLE}")"
 
-CURRENT_TASK_JSON="$(aws ecs describe-task-definition --task-definition "${INPUT_NAME}")"
+CURRENT_TASK_JSON="$(aws ecs describe-task-definition --task-definition "${INPUT_NAME}" || echo '{}')"
 
 # Register a variation of the task if any parameters are specified
 UPDATE_TASK='false'
