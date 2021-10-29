@@ -123,17 +123,18 @@ task_param()
 {
 	case "${1}" in
 	(task_role)
-		echo "${CURRENT_TASK_JSON}"|jq -rc '.taskDefinition.taskRoleArn' >/dev/null 2>&1
+		set -- "$(echo "${CURRENT_TASK_JSON}"|jq -rc '.taskDefinition.taskRoleArn' >/dev/null 2>&1)"
 		;;
 	(exec_role)
-		echo "${CURRENT_TASK_JSON}"|jq -rc '.taskDefinition.executionRoleArn'
+		set -- "$(echo "${CURRENT_TASK_JSON}"|jq -rc '.taskDefinition.executionRoleArn')"
 		;;
 	(project)
-		echo "${CURRENT_TASK_JSON}"|jq -rc '.taskDefinition.containerDefinitions[0]["logConfiguration"]["options"]["awslogs-group"]'
+		set -- "$(echo "${CURRENT_TASK_JSON}"|jq -rc '.taskDefinition.containerDefinitions[0]["logConfiguration"]["options"]["awslogs-group"]')"
 		;;
-	(*)	echo "${CURRENT_TASK_JSON}"|jq -rc ".taskDefinition.containerDefinitions[0].${1}"
+	(*)	set -- "$(echo "${CURRENT_TASK_JSON}"|jq -rc ".taskDefinition.containerDefinitions[0].${1}")"
 		;;
 	esac
+	test "${1}" = 'null' || echo "${1}"
 }
 
 if ! test -z "${INPUT_AWS_ROLE_ARN}"; then
