@@ -8,11 +8,34 @@ tolower() { echo "$*" | tr '[A-Z]' '[a-z]'; }
 
 aws_account_id() { aws --output=json sts get-caller-identity | jq -rc '.["Account"]'; }
 aws_region() {
-	if test -z "${INPUT_REGION}"; then
-		aws configure list | awk '$1 ~ /^region$/{print$2}'
-	else
+	if test -n "${INPUT_REGION}"; then
 		echo "${INPUT_REGION}"
+		return
 	fi
+
+	if test -n "${AWS_REGION}"; then
+		echo "${AWS_REGION}"
+		return
+	fi
+
+	if test -n "${AWS_DEFAULT_REGION}"; then
+		echo "${AWS_DEFAULT_REGION}"
+		return
+	fi
+
+	region_value=
+	if test -n "${AWS_PROFILE}"; then
+		region_value="$(aws configure get region --profile "${AWS_PROFILE}" 2>/dev/null || true)"
+	else
+		region_value="$(aws configure get region 2>/dev/null || true)"
+	fi
+
+	if test -n "${region_value}"; then
+		echo "${region_value}"
+		return
+	fi
+
+	die 'Unable to determine AWS region. Set INPUT_REGION, AWS_REGION, or AWS_DEFAULT_REGION.'
 }
 aws_policy_arn()
 {
